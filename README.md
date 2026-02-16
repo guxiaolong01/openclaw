@@ -1,13 +1,14 @@
 # OpenClaw官方源代码镜像
 
-这是一个OpenClaw官方源代码的镜像仓库，保持与[openclaw/openclaw](https://github.com/openclaw/openclaw)官方仓库的同步更新。
+这是一个OpenClaw官方源代码的完整镜像仓库，保持与[openclaw/openclaw](https://github.com/openclaw/openclaw)官方仓库的同步更新。
 
 ## 📦 仓库信息
 
 - **官方仓库**: [openclaw/openclaw](https://github.com/openclaw/openclaw)
 - **镜像仓库**: [guxiaolong01/openclaw-source-mirror](https://github.com/guxiaolong01/openclaw-source-mirror)
-- **同步频率**: 每日自动同步
-- **最后同步**: 2026-02-16
+- **同步时间**: 2026-02-16 12:56
+- **官方版本**: 2026.2.14
+- **最新提交**: f1654b4 - test: isolate telegram bot behavior suite from unit-fast lane
 
 ## 🔄 同步机制
 
@@ -18,15 +19,13 @@
 3. **冲突处理**: 自动处理简单的合并冲突
 4. **状态通知**: 同步结果通过GitHub Actions通知
 
-## 📁 目录结构
+## 📁 源代码统计
 
-```
-openclaw-mirror/
-├── .github/workflows/    # GitHub Actions工作流
-├── sync-scripts/         # 同步脚本
-├── docs/                 # 文档
-└── README.md            # 本文件
-```
+- **TypeScript文件**: 3,778 个
+- **JavaScript文件**: 12 个  
+- **JSON配置文件**: 116 个
+- **文档文件**: 791 个
+- **总文件数**: 5,673 个
 
 ## 🚀 使用方法
 
@@ -47,4 +46,4 @@ cd openclaw-source-mirror
 
 ## 📝 许可证
 
-本镜像仓库遵循OpenClaw官方仓库的许可证。
+本镜像仓库遵循OpenClaw官方仓库的许可证（MIT License）。

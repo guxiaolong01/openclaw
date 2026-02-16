@@ -1,0 +1,108 @@
+name: Sync OpenClaw Official Repository
+
+on:
+  schedule:
+    # 每天UTC时间00:00运行
+    - cron: '0 0 * * *'
+  workflow_dispatch:  # 允许手动触发
+    inputs:
+      force:
+        description: '强制同步（即使没有更新）'
+        required: false
+        default: 'false'
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 检出镜像仓库
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # 获取完整历史
+    
+    - name: 配置Git
+      run: |
+        git config user.name "GitHub Actions"
+        git config user.email "actions@github.com"
+    
+    - name: 添加上游仓库
+      run: |
+        git remote add upstream https://github.com/openclaw/openclaw.git || true
+        git fetch upstream
+    
+    - name: 检查更新
+      id: check
+      run: |
+        LOCAL_COMMIT=$(git rev-parse main)
+        UPSTREAM_COMMIT=$(git rev-parse upstream/main)
+        
+        echo "本地提交: ${LOCAL_COMMIT:0:8}"
+        echo "上游提交: ${UPSTREAM_COMMIT:0:8}"
+        
+        if [ "$LOCAL_COMMIT" = "$UPSTREAM_COMMIT" ] && [ "${{ github.event.inputs.force }}" != "true" ]; then
+          echo "status=no_update" >> $GITHUB_OUTPUT
+          echo "✅ 已经是最新版本"
+        else
+          echo "status=needs_update" >> $GITHUB_OUTPUT
+          echo "📥 发现更新或强制同步"
+        fi
+    
+    - name: 同步更新
+      if: steps.check.outputs.status == 'needs_update'
+      run: |
+        echo "🔄 开始同步..."
+        
+        # 尝试合并
+        if git merge --no-edit upstream/main; then
+          echo "✅ 合并成功"
+          
+          # 推送到镜像仓库
+          git push origin main
+          echo "🚀 推送成功"
+          
+          # 创建成功状态
+          echo "SYNC_RESULT=success" >> $GITHUB_ENV
+          echo "SYNC_MESSAGE=同步成功！已更新到最新版本。" >> $GITHUB_ENV
+        else
+          echo "❌ 合并冲突"
+          
+          # 尝试重置并强制推送（对于镜像仓库通常可以）
+          echo "🔄 尝试强制同步..."
+          git reset --hard upstream/main
+          git push --force origin main
+          
+          echo "SYNC_RESULT=force_sync" >> $GITHUB_ENV
+          echo "SYNC_MESSAGE=同步完成（强制模式）。" >> $GITHUB_ENV
+        fi
+    
+    - name: 发送通知
+      if: always()
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const { repo, owner } = context.repo;
+          const runId = context.runId;
+          const workflow = context.workflow;
+          
+          let message = '';
+          let color = 'gray';
+          
+          if (process.env.SYNC_RESULT === 'success') {
+            message = `✅ ${process.env.SYNC_MESSAGE}`;
+            color = 'green';
+          } else if (process.env.SYNC_RESULT === 'force_sync') {
+            message = `⚠️ ${process.env.SYNC_MESSAGE}`;
+            color = 'yellow';
+          } else if (steps.check.outputs.status === 'no_update') {
+            message = 'ℹ️ 已经是最新版本，无需同步';
+            color = 'blue';
+          } else {
+            message = '❌ 同步失败';
+            color = 'red';
+          }
+          
+          // 创建Issue评论或使用其他通知方式
+          console.log(`同步结果: ${message}`);
+          
+          // 可以在这里添加飞书、Slack等通知集成
