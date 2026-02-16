@@ -1,0 +1,42 @@
+# 开发文件
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+*.temp
+
+# 编辑器文件
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 环境文件
+.env
+.env.local
+.env.*.local
+
+# 依赖文件
+node_modules/
+package-lock.json
+yarn.lock
+
+# 构建文件
+dist/
+build/
+*.exe
+*.dll
+*.so
+*.dylib
+
+# 测试文件
+coverage/
+*.cov
+*.lcov
+
+# 系统文件
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
