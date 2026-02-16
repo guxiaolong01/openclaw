@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # OpenClaw官方源代码镜像推送脚本
-# 将本地镜像仓库推送到GitHub
+# 将本地镜像仓库推送到GitHub现有仓库
 
 set -e
 
@@ -34,18 +34,19 @@ if git diff --cached --quiet; then
 else
     # 提交更改
     echo "💾 提交更改..."
-    git commit -m "feat: 同步OpenClaw官方源代码
+    git commit -m "feat: 同步OpenClaw官方源代码 (2026.2.14)
 
 - 官方版本: 2026.2.14
 - 最新提交: f1654b4 - test: isolate telegram bot behavior suite from unit-fast lane
 - 文件统计: 5,673个文件 (3,778 TypeScript, 12 JavaScript, 116 JSON, 791文档)
 - 同步时间: $(date +'%Y-%m-%d %H:%M:%S')
-- 同步机制: GitHub Actions每日自动同步 + 手动同步脚本"
+- 同步机制: GitHub Actions每日自动同步 + 手动同步脚本
+- 镜像类型: 完整源代码镜像（非fork）"
 fi
 
 # 设置远程仓库
-REMOTE_URL="https://${GITHUB_TOKEN}@github.com/guxiaolong01/openclaw-source-mirror.git"
-echo "🔗 设置远程仓库: guxiaolong01/openclaw-source-mirror"
+REMOTE_URL="https://${GITHUB_TOKEN}@github.com/guxiaolong01/openclaw.git"
+echo "🔗 设置远程仓库: guxiaolong01/openclaw"
 
 # 检查是否已有远程仓库
 if ! git remote | grep -q origin; then
@@ -59,5 +60,6 @@ echo "🚀 推送到GitHub..."
 git push -u origin main --force
 
 echo "✅ 推送完成！"
-echo "📊 仓库地址: https://github.com/guxiaolong01/openclaw-source-mirror"
+echo "📊 仓库地址: https://github.com/guxiaolong01/openclaw"
 echo "🔄 同步机制: GitHub Actions每日自动同步"
+echo "📈 仓库状态: 完整源代码镜像（已更新至2026.2.14）"
